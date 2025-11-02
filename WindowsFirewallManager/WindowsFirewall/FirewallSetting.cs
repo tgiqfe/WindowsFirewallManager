@@ -33,8 +33,8 @@ namespace WindowsFirewallManager.WindowsFirewall
             this.Enabled = policy.FirewallEnabled[profile];
             this.BlockAllInbound = policy.BlockAllInboundTraffic[profile];
             this.NotifyOnListen = !policy.NotificationsDisabled[profile];
-            this.DefaultInboundAction = FirewallComponentsMap.GetActionName(policy.DefaultInboundAction[profile]);
-            this.DefaultOutboundAction = FirewallComponentsMap.GetActionName(policy.DefaultOutboundAction[profile]);
+            this.DefaultInboundAction = FirewallComponents.GetActionName(policy.DefaultInboundAction[profile]);
+            this.DefaultOutboundAction = FirewallComponents.GetActionName(policy.DefaultOutboundAction[profile]);
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace WindowsFirewallManager.WindowsFirewall
                     }
                     if (!string.IsNullOrEmpty(defaultInboundAction))
                     {
-                        var defInbound = FirewallComponentsMap.GetActionFlagFromName(defaultInboundAction);
+                        var defInbound = FirewallComponents.GetActionFlagFromName(defaultInboundAction);
                         if (defInbound != null)
                         {
                             Logger.WriteLine("Info", $"Set Default Inbound Action to {defaultInboundAction} for {this.Profile} profile.");
@@ -126,7 +126,7 @@ namespace WindowsFirewallManager.WindowsFirewall
                     }
                     if (!string.IsNullOrEmpty(defaultOutboundAction))
                     {
-                        var defOutbound = FirewallComponentsMap.GetActionFlagFromName(defaultOutboundAction);
+                        var defOutbound = FirewallComponents.GetActionFlagFromName(defaultOutboundAction);
                         if (defOutbound != null)
                         {
                             Logger.WriteLine("Info", $"Set Default Outbound Action to {defaultOutboundAction} for {this.Profile} profile.");

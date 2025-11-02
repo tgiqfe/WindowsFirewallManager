@@ -1,37 +1,55 @@
 ﻿using NetFwTypeLib;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace WindowsFirewallManager.WindowsFirewall
 {
-    internal class FirewallComponentsMap
+    internal class FirewallComponents
     {
-        #region Direction Mapping
-
         /// <summary>
-        /// Direction paremter
+        /// Firewall rule direction mapping
         /// </summary>
-        /// <param name="direction"></param>
-        /// <returns></returns>
-        public static string GetDirectionName(NET_FW_RULE_DIRECTION_ direction)
+        /// <typeparam name="T"></typeparam>
+        public class DirectionMap<T> where T : Enum
         {
-            return direction switch
+            private static Dictionary<string[], T> _map = null;
+
+            private static void Initialize()
             {
-                NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_IN => "Inbound",
-                NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_OUT => "Outbound",
-                _ => "Unknown",
-            };
+                _map = new()
+                {
+                    { new string[] { "Inbound", "in", "i" }, (T)Enum.Parse(typeof(T), "NET_FW_RULE_DIR_IN") },
+                    { new string[] { "Outbound", "out", "o" }, (T)Enum.Parse(typeof(T), "NET_FW_RULE_DIR_OUT") },
+                };
+            }
+
+            public static T StringToValue(string text)
+            {
+                if (_map == null) Initialize();
+                foreach (var kvp in _map)
+                {
+                    if (kvp.Key.Any(x => string.Equals(x, text, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        return kvp.Value;
+                    }
+                }
+                throw new InvalidEnumArgumentException($"Invalid direction string: {text}");
+            }
+
+            public static string ValueToString(T val)
+            {
+                if (_map == null) Initialize();
+                foreach (var kvp in _map)
+                {
+                    if (kvp.Value.Equals(val))
+                    {
+                        return kvp.Key[0];
+                    }
+                }
+                return "Unknown";
+            }
         }
 
-        public static NET_FW_RULE_DIRECTION_? GetDirectionFlagFromName(string directionName)
-        {
-            return directionName.ToLower() switch
-            {
-                "inbound" or "in" => NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_IN,
-                "outbound" or "out" => NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_OUT,
-                _ => null,
-            };
-        }
-
-        #endregion
         #region Action Mapping
 
         public static string GetActionName(NET_FW_ACTION_ action)

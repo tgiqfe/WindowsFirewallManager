@@ -42,15 +42,15 @@ namespace WindowsFirewallManager.WindowsFirewall
             this.Description = rule.Description;
             this.Enabled = rule.Enabled;
             this.Grouping = rule.Grouping;
-            this.Direction = FirewallComponentsMap.GetDirectionName(rule.Direction);
-            this.Action = FirewallComponentsMap.GetActionName(rule.Action);
-            this.Protocol = FirewallComponentsMap.GetProtocolName(rule.Protocol);
+            this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
+            this.Action = FirewallComponents.GetActionName(rule.Action);
+            this.Protocol = FirewallComponents.GetProtocolName(rule.Protocol);
             this.LocalPorts = rule.LocalPorts;
             this.RemotePorts = rule.RemotePorts;
             this.LocalAddresses = rule.LocalAddresses;
             this.RemoteAddresses = rule.RemoteAddresses;
             this.ApplicationName = rule.ApplicationName;
-            this.Profiles = FirewallComponentsMap.GetProfilesName(rule.Profiles);
+            this.Profiles = FirewallComponents.GetProfilesName(rule.Profiles);
             Marshal.ReleaseComObject(fwPolicy2);
             Marshal.ReleaseComObject(rule);
         }
@@ -65,15 +65,15 @@ namespace WindowsFirewallManager.WindowsFirewall
             this.Description = rule.Description;
             this.Enabled = rule.Enabled;
             this.Grouping = rule.Grouping;
-            this.Direction = FirewallComponentsMap.GetDirectionName(rule.Direction);
-            this.Action = FirewallComponentsMap.GetActionName(rule.Action);
-            this.Protocol = FirewallComponentsMap.GetProtocolName(rule.Protocol);
+            this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
+            this.Action = FirewallComponents.GetActionName(rule.Action);
+            this.Protocol = FirewallComponents.GetProtocolName(rule.Protocol);
             this.LocalPorts = rule.LocalPorts;
             this.RemotePorts = rule.RemotePorts;
             this.LocalAddresses = rule.LocalAddresses;
             this.RemoteAddresses = rule.RemoteAddresses;
             this.ApplicationName = rule.ApplicationName;
-            this.Profiles = FirewallComponentsMap.GetProfilesName(rule.Profiles);
+            this.Profiles = FirewallComponents.GetProfilesName(rule.Profiles);
         }
 
         /// <summary>
@@ -128,16 +128,16 @@ namespace WindowsFirewallManager.WindowsFirewall
                     Logger.WriteLine("Warning", "Skip creating firewall rule because display name is empty.");
                 }
 
-                var directionFlag = FirewallComponentsMap.GetDirectionFlagFromName(direction);
-                var actionFlag = FirewallComponentsMap.GetActionFlagFromName(action);
-                var protocolNum = FirewallComponentsMap.GetProtocolNumberFromName(protocol);
-                var profilesType = FirewallComponentsMap.GetProfilesTypeFromName(profiles);
+                var directionFlag = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.StringToValue(direction);
+                var actionFlag = FirewallComponents.GetActionFlagFromName(action);
+                var protocolNum = FirewallComponents.GetProtocolNumberFromName(protocol);
+                var profilesType = FirewallComponents.GetProfilesTypeFromName(profiles);
 
                 INetFwRule3 newRule = (INetFwRule3)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FWRule"));
                 newRule.Name = displayName;
                 if (description != null) newRule.Description = description;
                 newRule.Enabled = enabled;
-                if (directionFlag != null) newRule.Direction = directionFlag.Value;
+                newRule.Direction = directionFlag;
                 if (actionFlag != null) newRule.Action = actionFlag.Value;
                 newRule.Grouping = grouping;
                 newRule.ApplicationName = applicationName;
@@ -342,17 +342,14 @@ namespace WindowsFirewallManager.WindowsFirewall
                         //  Set direction. (Inbound/Outbound)
                         if (direction != null)
                         {
-                            var directionFlag = FirewallComponentsMap.GetDirectionFlagFromName(direction);
-                            if (directionFlag != null)
-                            {
-                                Logger.WriteLine("Info", $"Set direction to: {direction}");
-                                rule.Direction = directionFlag.Value;
-                            }
+                            var directionFlag = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.StringToValue(direction);
+                            Logger.WriteLine("Info", $"Set direction to: {direction}");
+                            rule.Direction = directionFlag;
                         }
                         //  Set action. (Allow/Deny)
                         if (action != null)
                         {
-                            var actionFlag = FirewallComponentsMap.GetActionFlagFromName(action);
+                            var actionFlag = FirewallComponents.GetActionFlagFromName(action);
                             if (actionFlag != null)
                             {
                                 Logger.WriteLine("Info", $"Set action to: {action}");
@@ -374,7 +371,7 @@ namespace WindowsFirewallManager.WindowsFirewall
                         //  Set protocol
                         if (protocol != null)
                         {
-                            var protocolNum = FirewallComponentsMap.GetProtocolNumberFromName(protocol);
+                            var protocolNum = FirewallComponents.GetProtocolNumberFromName(protocol);
                             if (protocolNum != null)
                             {
                                 Logger.WriteLine("Info", $"Set protocol to: {protocol}");
@@ -408,7 +405,7 @@ namespace WindowsFirewallManager.WindowsFirewall
                         //  Set profiles    
                         if (profiles != null)
                         {
-                            var profilesType = FirewallComponentsMap.GetProfilesTypeFromName(profiles);
+                            var profilesType = FirewallComponents.GetProfilesTypeFromName(profiles);
                             if (profilesType != null)
                             {
                                 Logger.WriteLine("Info", $"Set profiles to: {profiles}");
