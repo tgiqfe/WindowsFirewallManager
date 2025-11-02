@@ -146,54 +146,57 @@ namespace WindowsFirewallManager.WindowsFirewall
         }
 
 
-        #region Profile Type Mapping
-
-        private enum ProfileType
+        public class ProfileMap
         {
-            Domain = 0x1,
-            Private = 0x2,
-            Public = 0x4,
-            Any = 0x7fffffff,
-        }
-
-        private static readonly Dictionary<string[], ProfileType> ProfileTypeMap = new()
-        {
-            { new string[]{"Any", "all", "*" }, ProfileType.Any },
-            { new string[]{"Domain", "dom" }, ProfileType.Domain },
-            { new string[]{"Private", "priv" }, ProfileType.Private },
-            { new string[]{"Public", "pub" }, ProfileType.Public },
-        };
-
-        public static string GetProfilesName(int profileType)
-        {
-            if (profileType == (int)ProfileType.Any) return ProfileType.Any.ToString();
-            var names = new List<string>();
-            foreach (ProfileType pt in Enum.GetValues(typeof(ProfileType)))
+            private static Dictionary<string[], int> _map = null;
+            private static void Initialize()
             {
-                if (pt != ProfileType.Any && (profileType & (int)pt) != 0)
+                _map = new()
                 {
-                    names.Add(pt.ToString());
-                }
+                    { new string[] { "Domain", "dom" }, 0x1 },
+                    { new string[] { "Private", "priv" }, 0x2 },
+                    { new string[] { "Public", "pub" }, 0x3 },
+                    { new string[] { "Any", "all", "*" }, 0x7fffffff },
+                };
             }
-            return string.Join(", ", names);
-        }
-
-        public static int? GetProfilesTypeFromName(string profilesName)
-        {
-            int profileType = 0;
-            foreach (var profile in profilesName.Split(',').Select(x => x.Trim()))
+            public static int StringToValue(string text)
             {
-                foreach (var kvp in ProfileTypeMap)
+                if (_map == null) Initialize();
+                int ret = 0;
+                foreach (var profile in text.Split(',').Select(x => x.Trim()))
                 {
-                    if (kvp.Key.Any(x => x.Equals(profile, StringComparison.OrdinalIgnoreCase)))
+                    bool found = false;
+                    foreach (var kvp in _map)
                     {
-                        profileType |= (int)kvp.Value;
+                        if (kvp.Key.Any(x => string.Equals(x, profile, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            ret |= kvp.Value;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        throw new InvalidEnumArgumentException($"Invalid profile string: {profile}");
                     }
                 }
+                return ret;
             }
-            return profileType == 0 ? null : profileType;
+            public static string ValueToString(int val)
+            {
+                int all_flags = 0x7fffffff;
+                if (val == all_flags) return "Any";
+                if (_map == null) Initialize();
+                var list = new List<string>();
+                foreach (var kvp in _map)
+                {
+                    if (val != all_flags && (kvp.Value & val) != 0)
+                    {
+                        list.Add(kvp.Key[0]);
+                    }
+                }
+                return string.Join(", ", list);
+            }
         }
-
-        #endregion
     }
 }

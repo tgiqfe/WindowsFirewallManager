@@ -50,7 +50,7 @@ namespace WindowsFirewallManager.WindowsFirewall
             this.LocalAddresses = rule.LocalAddresses;
             this.RemoteAddresses = rule.RemoteAddresses;
             this.ApplicationName = rule.ApplicationName;
-            this.Profiles = FirewallComponents.GetProfilesName(rule.Profiles);
+            this.Profiles = FirewallComponents.ProfileMap.ValueToString(rule.Profiles);
             Marshal.ReleaseComObject(fwPolicy2);
             Marshal.ReleaseComObject(rule);
         }
@@ -73,7 +73,7 @@ namespace WindowsFirewallManager.WindowsFirewall
             this.LocalAddresses = rule.LocalAddresses;
             this.RemoteAddresses = rule.RemoteAddresses;
             this.ApplicationName = rule.ApplicationName;
-            this.Profiles = FirewallComponents.GetProfilesName(rule.Profiles);
+            this.Profiles = FirewallComponents.ProfileMap.ValueToString(rule.Profiles);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace WindowsFirewallManager.WindowsFirewall
                 var directionFlag = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.StringToValue(direction);
                 var actionFlag = FirewallComponents.ActionMap<NET_FW_ACTION_>.StringToValue(action);
                 var protocolNum = FirewallComponents.ProtocolsMap.StringToValue(protocol);
-                var profilesType = FirewallComponents.GetProfilesTypeFromName(profiles);
+                var profilesType = FirewallComponents.ProfileMap.StringToValue(profiles);
 
                 INetFwRule3 newRule = (INetFwRule3)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FWRule"));
                 newRule.Name = displayName;
@@ -146,7 +146,7 @@ namespace WindowsFirewallManager.WindowsFirewall
                 if (!string.IsNullOrEmpty(remotePorts) && protocolNum != 256) newRule.RemotePorts = remotePorts;
                 newRule.LocalAddresses = string.IsNullOrEmpty(localAddresses) ? "*" : localAddresses;
                 newRule.RemoteAddresses = string.IsNullOrEmpty(remoteAddresses) ? "*" : remoteAddresses;
-                if (profilesType != null) newRule.Profiles = profilesType.Value;
+                newRule.Profiles = profilesType;
 
                 INetFwPolicy2 fwPolicy2 = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
                 fwPolicy2.Rules.Add(newRule);
@@ -399,12 +399,9 @@ namespace WindowsFirewallManager.WindowsFirewall
                         //  Set profiles    
                         if (profiles != null)
                         {
-                            var profilesType = FirewallComponents.GetProfilesTypeFromName(profiles);
-                            if (profilesType != null)
-                            {
-                                Logger.WriteLine("Info", $"Set profiles to: {profiles}");
-                                rule.Profiles = profilesType.Value;
-                            }
+                            var profilesType = FirewallComponents.ProfileMap.StringToValue(profiles);
+                            Logger.WriteLine("Info", $"Set profiles to: {profiles}");
+                            rule.Profiles = profilesType;
                         }
                     }
                 }
