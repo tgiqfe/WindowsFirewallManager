@@ -7,13 +7,13 @@ namespace WindowsFirewallManager.WindowsFirewall
     internal class FirewallComponents
     {
         /// <summary>
-        /// Firewall rule direction mapping
+        /// Firewall rule direction mapping.
+        /// Enum: NET_FW_RULE_DIR_
         /// </summary>
         /// <typeparam name="T"></typeparam>
         public class DirectionMap<T> where T : Enum
         {
             private static Dictionary<string[], T> _map = null;
-
             private static void Initialize()
             {
                 _map = new()
@@ -22,7 +22,6 @@ namespace WindowsFirewallManager.WindowsFirewall
                     { new string[] { "Outbound", "out", "o" }, (T)Enum.Parse(typeof(T), "NET_FW_RULE_DIR_OUT") },
                 };
             }
-
             public static T StringToValue(string text)
             {
                 if (_map == null) Initialize();
@@ -35,7 +34,6 @@ namespace WindowsFirewallManager.WindowsFirewall
                 }
                 throw new InvalidEnumArgumentException($"Invalid direction string: {text}");
             }
-
             public static string ValueToString(T val)
             {
                 if (_map == null) Initialize();
@@ -50,29 +48,48 @@ namespace WindowsFirewallManager.WindowsFirewall
             }
         }
 
-        #region Action Mapping
-
-        public static string GetActionName(NET_FW_ACTION_ action)
+        /// <summary>
+        /// Firewall rule direction mapping.
+        /// Enum: NET_FW_ACTION_
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public class ActionMap<T> where T : Enum
         {
-            return action switch
+            private static Dictionary<string[], T> _map = null;
+            private static void Initialize()
             {
-                NET_FW_ACTION_.NET_FW_ACTION_ALLOW => "Allow",
-                NET_FW_ACTION_.NET_FW_ACTION_BLOCK => "Deny",
-                _ => "Unknown",
-            };
+                _map = new()
+                {
+                    { new string[] { "Allow", "accept", "a" }, (T)Enum.Parse(typeof(T), "NET_FW_ACTION_ALLOW") },
+                    { new string[] { "Deny", "block", "drop", "d" }, (T)Enum.Parse(typeof(T), "NET_FW_ACTION_BLOCK") },
+                };
+            }
+            public static T StringToValue(string text)
+            {
+                if (_map == null) Initialize();
+                foreach (var kvp in _map)
+                {
+                    if (kvp.Key.Any(x => string.Equals(x, text, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        return kvp.Value;
+                    }
+                }
+                throw new InvalidEnumArgumentException($"Invalid action string: {text}");
+            }
+            public static string ValueToString(T val)
+            {
+                if (_map == null) Initialize();
+                foreach (var kvp in _map)
+                {
+                    if (kvp.Value.Equals(val))
+                    {
+                        return kvp.Key[0];
+                    }
+                }
+                return "Unknown";
+            }
         }
 
-        public static NET_FW_ACTION_? GetActionFlagFromName(string actionName)
-        {
-            return actionName.ToLower() switch
-            {
-                "allow" => NET_FW_ACTION_.NET_FW_ACTION_ALLOW,
-                "deny" or "block" => NET_FW_ACTION_.NET_FW_ACTION_BLOCK,
-                _ => null,
-            };
-        }
-
-        #endregion
         #region Protocol Mapping
 
         private readonly static Dictionary<int, string> Protocols = new Dictionary<int, string>

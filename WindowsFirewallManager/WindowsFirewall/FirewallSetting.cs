@@ -33,8 +33,8 @@ namespace WindowsFirewallManager.WindowsFirewall
             this.Enabled = policy.FirewallEnabled[profile];
             this.BlockAllInbound = policy.BlockAllInboundTraffic[profile];
             this.NotifyOnListen = !policy.NotificationsDisabled[profile];
-            this.DefaultInboundAction = FirewallComponents.GetActionName(policy.DefaultInboundAction[profile]);
-            this.DefaultOutboundAction = FirewallComponents.GetActionName(policy.DefaultOutboundAction[profile]);
+            this.DefaultInboundAction = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(policy.DefaultInboundAction[profile]);
+            this.DefaultOutboundAction = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(policy.DefaultOutboundAction[profile]);
         }
 
         /// <summary>
@@ -117,21 +117,15 @@ namespace WindowsFirewallManager.WindowsFirewall
                     }
                     if (!string.IsNullOrEmpty(defaultInboundAction))
                     {
-                        var defInbound = FirewallComponents.GetActionFlagFromName(defaultInboundAction);
-                        if (defInbound != null)
-                        {
-                            Logger.WriteLine("Info", $"Set Default Inbound Action to {defaultInboundAction} for {this.Profile} profile.");
-                            fwPolicy2.DefaultInboundAction[_profileType] = defInbound.Value;
-                        }
+                        var defInbound = FirewallComponents.ActionMap<NET_FW_ACTION_>.StringToValue(defaultInboundAction);
+                        Logger.WriteLine("Info", $"Set Default Inbound Action to {defaultInboundAction} for {this.Profile} profile.");
+                        fwPolicy2.DefaultInboundAction[_profileType] = defInbound;
                     }
                     if (!string.IsNullOrEmpty(defaultOutboundAction))
                     {
-                        var defOutbound = FirewallComponents.GetActionFlagFromName(defaultOutboundAction);
-                        if (defOutbound != null)
-                        {
-                            Logger.WriteLine("Info", $"Set Default Outbound Action to {defaultOutboundAction} for {this.Profile} profile.");
-                            fwPolicy2.DefaultOutboundAction[_profileType] = defOutbound.Value;
-                        }
+                        var defOutbound = FirewallComponents.ActionMap<NET_FW_ACTION_>.StringToValue(defaultOutboundAction);
+                        Logger.WriteLine("Info", $"Set Default Outbound Action to {defaultOutboundAction} for {this.Profile} profile.");
+                        fwPolicy2.DefaultOutboundAction[_profileType] = defOutbound;
                     }
                     Logger.WriteLine("Info", $"Success to set {_log_target}.");
                     return true;
