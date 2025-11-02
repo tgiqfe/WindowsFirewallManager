@@ -1,6 +1,4 @@
-﻿using NetFwTypeLib;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
+﻿using System.ComponentModel;
 
 namespace WindowsFirewallManager.WindowsFirewall
 {
@@ -145,7 +143,10 @@ namespace WindowsFirewallManager.WindowsFirewall
             }
         }
 
-
+        /// <summary>
+        /// Firewall rule profile mapping.
+        /// int: Profile bitmask
+        /// </summary>
         public class ProfileMap
         {
             private static Dictionary<string[], int> _map = null;
