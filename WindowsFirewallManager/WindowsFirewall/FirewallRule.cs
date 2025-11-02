@@ -44,7 +44,7 @@ namespace WindowsFirewallManager.WindowsFirewall
             this.Grouping = rule.Grouping;
             this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
             this.Action = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
-            this.Protocol = FirewallComponents.GetProtocolName(rule.Protocol);
+            this.Protocol = FirewallComponents.ProtocolsMap.ValueToString(rule.Protocol);
             this.LocalPorts = rule.LocalPorts;
             this.RemotePorts = rule.RemotePorts;
             this.LocalAddresses = rule.LocalAddresses;
@@ -67,7 +67,7 @@ namespace WindowsFirewallManager.WindowsFirewall
             this.Grouping = rule.Grouping;
             this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
             this.Action = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
-            this.Protocol = FirewallComponents.GetProtocolName(rule.Protocol);
+            this.Protocol = FirewallComponents.ProtocolsMap.ValueToString(rule.Protocol);
             this.LocalPorts = rule.LocalPorts;
             this.RemotePorts = rule.RemotePorts;
             this.LocalAddresses = rule.LocalAddresses;
@@ -130,7 +130,7 @@ namespace WindowsFirewallManager.WindowsFirewall
 
                 var directionFlag = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.StringToValue(direction);
                 var actionFlag = FirewallComponents.ActionMap<NET_FW_ACTION_>.StringToValue(action);
-                var protocolNum = FirewallComponents.GetProtocolNumberFromName(protocol);
+                var protocolNum = FirewallComponents.ProtocolsMap.StringToValue(protocol);
                 var profilesType = FirewallComponents.GetProfilesTypeFromName(profiles);
 
                 INetFwRule3 newRule = (INetFwRule3)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FWRule"));
@@ -141,7 +141,7 @@ namespace WindowsFirewallManager.WindowsFirewall
                 newRule.Action = actionFlag;
                 newRule.Grouping = grouping;
                 newRule.ApplicationName = applicationName;
-                if (protocolNum != null) newRule.Protocol = protocolNum.Value;
+                newRule.Protocol = protocolNum;
                 if (!string.IsNullOrEmpty(localPorts) && protocolNum != 256) newRule.LocalPorts = localPorts;
                 if (!string.IsNullOrEmpty(remotePorts) && protocolNum != 256) newRule.RemotePorts = remotePorts;
                 newRule.LocalAddresses = string.IsNullOrEmpty(localAddresses) ? "*" : localAddresses;
@@ -368,12 +368,9 @@ namespace WindowsFirewallManager.WindowsFirewall
                         //  Set protocol
                         if (protocol != null)
                         {
-                            var protocolNum = FirewallComponents.GetProtocolNumberFromName(protocol);
-                            if (protocolNum != null)
-                            {
-                                Logger.WriteLine("Info", $"Set protocol to: {protocol}");
-                                rule.Protocol = protocolNum.Value;
-                            }
+                            var protocolNum = FirewallComponents.ProtocolsMap.StringToValue(protocol);
+                            Logger.WriteLine("Info", $"Set protocol to: {protocol}");
+                            rule.Protocol = protocolNum;
                         }
                         //  Set local ports
                         if (localPorts != null)

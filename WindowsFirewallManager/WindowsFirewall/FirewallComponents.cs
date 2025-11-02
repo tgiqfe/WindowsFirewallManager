@@ -90,60 +90,62 @@ namespace WindowsFirewallManager.WindowsFirewall
             }
         }
 
-        #region Protocol Mapping
-
-        private readonly static Dictionary<int, string> Protocols = new Dictionary<int, string>
+        /// <summary>
+        /// Firewall rule protocol mapping.
+        /// int: Protocol number
+        /// </summary>
+        public class ProtocolsMap
         {
-            { 0, "HOPOPT" },
-            { 1, "ICMPv4" },
-            { 2, "IGMP" },
-            { 6, "TCP" },
-            { 17, "UDP" },
-            { 41, "IPv6" },
-            { 43, "IPv6-Route" },
-            { 44, "IPv6-Frag" },
-            { 47, "GRE" },
-            { 58, "ICMPv6" },
-            { 59, "IPv6-NoNxt" },
-            { 60, "IPv6-Opts" },
-            { 112, "VRRP" },
-            { 113, "PGM" },
-            { 115, "L2TP" },
-            { 256, "Any" },
-        };
-
-        public static string GetProtocolName(int protocolNumber)
-        {
-            if (Protocols.TryGetValue(protocolNumber, out string protocolName))
+            private static Dictionary<string[], int> _map = null;
+            private static void Initialize()
             {
-                return protocolName;
-            }
-            return "Unknown";
-        }
-
-        public static int? GetProtocolNumberFromName(string protocolName)
-        {
-            if (int.TryParse(protocolName, out int protocolNumber))
-            {
-                return protocolNumber;
-            }
-            foreach (var kvp in Protocols)
-            {
-                if (string.Equals(kvp.Value, protocolName, StringComparison.OrdinalIgnoreCase))
+                _map = new()
                 {
-                    return kvp.Key;
-                }
+                    { new string[] { "HOPOPT", "hopopt" }, 0 },
+                    { new string[] { "ICMPv4", "ICMP4", "icmp" }, 1 },
+                    { new string[] { "IGMP", "igmp" }, 2 },
+                    { new string[] { "TCP", "tcp" }, 6 },
+                    { new string[] { "UDP", "udp" }, 17 },
+                    { new string[] { "IPv6", "ipv6" }, 41 },
+                    { new string[] { "IPv6-Route", "ipv6-route" }, 43 },
+                    { new string[] { "IPv6-Frag", "ipv6-frag" }, 44 },
+                    { new string[] { "GRE", "gre" }, 47 },
+                    { new string[] { "ICMPv6", "ICMP6" }, 58 },
+                    { new string[] { "IPv6-NoNxt", "ipv6-nonxt" }, 59 },
+                    { new string[] { "IPv6-Opts", "ipv6-opts" }, 60 },
+                    { new string[] { "VRRP", "vrrp" }, 112 },
+                    { new string[] { "PGM", "pgm" }, 113 },
+                    { new string[] { "L2TP", "l2tp" }, 115 },
+                    { new string[] { "Any", "all", "*" }, 256 },
+                };
             }
-            return protocolName.ToLower() switch
+            public static int StringToValue(string text)
             {
-                "icmp" or "icmp v4" or "icmp4" => 1,
-                "icmp v6" or "icmp6" => 58,
-                "all" or "any" or "*" => 256,
-                _ => null,
-            };
+                if (_map == null) Initialize();
+                foreach (var kvp in _map)
+                {
+                    if (kvp.Key.Any(x => string.Equals(x, text, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        return kvp.Value;
+                    }
+                }
+                throw new InvalidEnumArgumentException($"Invalid action string: {text}");
+            }
+            public static string ValueToString(int val)
+            {
+                if (_map == null) Initialize();
+                foreach (var kvp in _map)
+                {
+                    if (kvp.Value.Equals(val))
+                    {
+                        return kvp.Key[0];
+                    }
+                }
+                return "Unknown";
+            }
         }
 
-        #endregion
+
         #region Profile Type Mapping
 
         private enum ProfileType
