@@ -158,8 +158,8 @@ namespace WindowsFirewallManager.WindowsFirewall
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to create {_log_target}. Exception: {e.ToString()}");
-                Logger.WriteRaw(e.Message);
+                Logger.WriteLine("Error", $"Failed to create {_log_target}.");
+                Logger.WriteRaw(e.ToString());
                 return false;
             }
         }
@@ -196,8 +196,8 @@ namespace WindowsFirewallManager.WindowsFirewall
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to disable {_log_target}. Exception: {e.ToString()}");
-                Logger.WriteRaw(e.Message);
+                Logger.WriteLine("Error", $"Failed to disable {_log_target}.");
+                Logger.WriteRaw(e.ToString());
             }
             return false;
         }
@@ -223,8 +223,8 @@ namespace WindowsFirewallManager.WindowsFirewall
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to disable {_log_target}. Exception: {e.ToString()}");
-                Logger.WriteRaw(e.Message);
+                Logger.WriteLine("Error", $"Failed to disable {_log_target}.");
+                Logger.WriteRaw(e.ToString());
             }
             return false;
         }
@@ -250,8 +250,8 @@ namespace WindowsFirewallManager.WindowsFirewall
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to remove {_log_target}. Exception: {e.ToString()}");
-                Logger.WriteRaw(e.Message);
+                Logger.WriteLine("Error", $"Failed to remove {_log_target}.");
+                Logger.WriteRaw(e.ToString());
             }
             return false;
         }
@@ -292,8 +292,8 @@ namespace WindowsFirewallManager.WindowsFirewall
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to rename {_log_target}. Exception: {e.ToString()}");
-                Logger.WriteRaw(e.Message);
+                Logger.WriteLine("Error", $"Failed to rename {_log_target}.");
+                Logger.WriteRaw(e.ToString());
             }
             return false;
         }
@@ -410,8 +410,8 @@ namespace WindowsFirewallManager.WindowsFirewall
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to set {_log_target}. Exception: {e.ToString()}");
-                Logger.WriteRaw(e.Message);
+                Logger.WriteLine("Error", $"Failed to set {_log_target}.");
+                Logger.WriteRaw(e.ToString());
             }
             return false;
         }
