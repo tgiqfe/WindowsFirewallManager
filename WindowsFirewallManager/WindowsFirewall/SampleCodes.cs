@@ -71,7 +71,7 @@ namespace WindowsFirewallManager.WindowsFirewall
                 description: "This is a test rule created from C# code.",
                 enabled: true,
                 direction: "Inbound",
-                action: "Allow",
+                actionType: "Allow",
                 grouping: "@FirewallAPI.dll,-32752",
                 applicationName: @"C:\Windows\System32\notepad.exe",
                 profiles: "Private, Public",

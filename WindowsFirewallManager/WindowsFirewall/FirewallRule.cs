@@ -15,7 +15,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         public string DisplayGroup { get { return DllResourceReader.ExtractString(this.Grouping); } }
         public string Grouping { get; private set; }
         public string Direction { get; private set; }
-        public string Action { get; private set; }
+        public string ActionType { get; private set; }
         public string Protocol { get; private set; }
         public string LocalPorts { get; private set; }
         public string RemotePorts { get; private set; }
@@ -43,7 +43,7 @@ namespace WindowsFirewallManager.WindowsFirewall
             this.Enabled = rule.Enabled;
             this.Grouping = rule.Grouping;
             this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
-            this.Action = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
+            this.ActionType = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
             this.Protocol = FirewallComponents.ProtocolsMap.ValueToString(rule.Protocol);
             this.LocalPorts = rule.LocalPorts;
             this.RemotePorts = rule.RemotePorts;
@@ -66,7 +66,7 @@ namespace WindowsFirewallManager.WindowsFirewall
             this.Enabled = rule.Enabled;
             this.Grouping = rule.Grouping;
             this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
-            this.Action = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
+            this.ActionType = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
             this.Protocol = FirewallComponents.ProtocolsMap.ValueToString(rule.Protocol);
             this.LocalPorts = rule.LocalPorts;
             this.RemotePorts = rule.RemotePorts;
@@ -95,7 +95,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         /// <param name="description"></param>
         /// <param name="enabled"></param>
         /// <param name="direction"></param>
-        /// <param name="action"></param>
+        /// <param name="actionType"></param>
         /// <param name="grouping"></param>
         /// <param name="applicationName"></param>
         /// <param name="profiles"></param>
@@ -110,7 +110,7 @@ namespace WindowsFirewallManager.WindowsFirewall
             string description,
             bool enabled,
             string direction,
-            string action,
+            string actionType,
             string grouping,
             string applicationName,
             string profiles,
@@ -129,7 +129,7 @@ namespace WindowsFirewallManager.WindowsFirewall
                 }
 
                 var directionFlag = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.StringToValue(direction);
-                var actionFlag = FirewallComponents.ActionMap<NET_FW_ACTION_>.StringToValue(action);
+                var actionFlag = FirewallComponents.ActionMap<NET_FW_ACTION_>.StringToValue(actionType);
                 var protocolNum = FirewallComponents.ProtocolsMap.StringToValue(protocol);
                 var profilesType = FirewallComponents.ProfileMap.StringToValue(profiles);
 
@@ -303,7 +303,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         /// </summary>
         /// <param name="description"></param>
         /// <param name="direction"></param>
-        /// <param name="action"></param>
+        /// <param name="actionType"></param>
         /// <param name="grouping"></param>
         /// <param name="applicationName"></param>
         /// <param name="protocol"></param>
@@ -316,7 +316,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         public bool SetRule(
             string description,
             string direction,
-            string action,
+            string actionType,
             string grouping,
             string applicationName,
             string protocol,
@@ -346,11 +346,11 @@ namespace WindowsFirewallManager.WindowsFirewall
                             Logger.WriteLine("Info", $"Set direction to: {direction}");
                             rule.Direction = directionFlag;
                         }
-                        //  Set action. (Allow/Deny)
-                        if (action != null)
+                        //  Set action type. (Allow/Deny)
+                        if (actionType != null)
                         {
-                            var actionFlag = FirewallComponents.ActionMap<NET_FW_ACTION_>.StringToValue(action);
-                            Logger.WriteLine("Info", $"Set action to: {action}");
+                            var actionFlag = FirewallComponents.ActionMap<NET_FW_ACTION_>.StringToValue(actionType);
+                            Logger.WriteLine("Info", $"Set action type to: {actionType}");
                             rule.Action = actionFlag;
                         }
                         //  Set grouping.

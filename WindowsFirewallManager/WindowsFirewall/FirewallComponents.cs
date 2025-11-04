@@ -72,7 +72,7 @@ namespace WindowsFirewallManager.WindowsFirewall
                         return kvp.Value;
                     }
                 }
-                throw new InvalidEnumArgumentException($"Invalid action string: {text}");
+                throw new InvalidEnumArgumentException($"Invalid action type string: {text}");
             }
             public static string ValueToString(T val)
             {
@@ -127,7 +127,7 @@ namespace WindowsFirewallManager.WindowsFirewall
                         return kvp.Value;
                     }
                 }
-                throw new InvalidEnumArgumentException($"Invalid action string: {text}");
+                throw new InvalidEnumArgumentException($"Invalid protocol string: {text}");
             }
             public static string ValueToString(int val)
             {
