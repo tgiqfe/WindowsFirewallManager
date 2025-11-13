@@ -6,12 +6,12 @@ namespace WindowsFirewallManager.WindowsFirewall
     {
         #region Public parameters
 
-        public string Profile { get; private set; }
-        public bool Enabled { get; private set; }
-        public bool BlockAllInbound { get; private set; }
-        public bool NotifyOnListen { get; private set; }
-        public string DefaultInboundAction { get; private set; }
-        public string DefaultOutboundAction { get; private set; }
+        public string Profile { get; set; }
+        public bool Enabled { get; set; }
+        public bool BlockAllInbound { get; set; }
+        public bool NotifyOnListen { get; set; }
+        public string DefaultInboundAction { get; set; }
+        public string DefaultOutboundAction { get; set; }
 
         #endregion
 
