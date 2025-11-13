@@ -9,20 +9,20 @@ namespace WindowsFirewallManager.WindowsFirewall
     {
         #region Public parameter
 
-        public string DisplayName { get; private set; }
-        public string Description { get; private set; }
-        public bool Enabled { get; private set; }
+        public string DisplayName { get; set; }
+        public string Description { get; set; }
+        public bool Enabled { get; set; }
         public string DisplayGroup { get { return DllResourceReader.ExtractString(this.Grouping); } }
-        public string Grouping { get; private set; }
-        public string Direction { get; private set; }
-        public string ActionType { get; private set; }
-        public string Protocol { get; private set; }
-        public string LocalPorts { get; private set; }
-        public string RemotePorts { get; private set; }
-        public string LocalAddresses { get; private set; }
-        public string RemoteAddresses { get; private set; }
-        public string ApplicationName { get; private set; }
-        public string Profiles { get; private set; }
+        public string Grouping { get; set; }
+        public string Direction { get; set; }
+        public string ActionType { get; set; }
+        public string Protocol { get; set; }
+        public string LocalPorts { get; set; }
+        public string RemotePorts { get; set; }
+        public string LocalAddresses { get; set; }
+        public string RemoteAddresses { get; set; }
+        public string ApplicationName { get; set; }
+        public string Profiles { get; set; }
 
         #endregion
 
@@ -38,21 +38,25 @@ namespace WindowsFirewallManager.WindowsFirewall
             var rule = fwPolicy2.Rules.
                 OfType<INetFwRule3>().
                 FirstOrDefault(x => name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
-            if(rule != null)
+            if (rule != null)
             {
                 this.DisplayName = rule.Name;
                 this.Description = rule.Description;
                 this.Enabled = rule.Enabled;
                 this.Grouping = rule.Grouping;
-                this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
-                this.ActionType = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
-                this.Protocol = FirewallComponents.ProtocolsMap.ValueToString(rule.Protocol);
+                //this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
+                this.Direction = FirewallParser.DirectionToString(rule.Direction);
+                //this.ActionType = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
+                this.ActionType = FirewallParser.ActionToString(rule.Action);
+                //this.Protocol = FirewallComponents.ProtocolsMap.ValueToString(rule.Protocol);
+                this.Protocol = FirewallParser.ProtocolToString(rule.Protocol);
                 this.LocalPorts = rule.LocalPorts;
                 this.RemotePorts = rule.RemotePorts;
                 this.LocalAddresses = rule.LocalAddresses;
                 this.RemoteAddresses = rule.RemoteAddresses;
                 this.ApplicationName = rule.ApplicationName;
-                this.Profiles = FirewallComponents.ProfileMap.ValueToString(rule.Profiles);
+                //this.Profiles = FirewallComponents.ProfileMap.ValueToString(rule.Profiles);
+                this.Profiles = FirewallParser.ProfileToString(rule.Profiles);
                 Marshal.ReleaseComObject(rule);
             }
             Marshal.ReleaseComObject(fwPolicy2);
@@ -68,15 +72,19 @@ namespace WindowsFirewallManager.WindowsFirewall
             this.Description = rule.Description;
             this.Enabled = rule.Enabled;
             this.Grouping = rule.Grouping;
-            this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
-            this.ActionType = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
-            this.Protocol = FirewallComponents.ProtocolsMap.ValueToString(rule.Protocol);
+            //this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
+            this.Direction = FirewallParser.DirectionToString(rule.Direction);
+            //this.ActionType = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
+            this.ActionType = FirewallParser.ActionToString(rule.Action);
+            //this.Protocol = FirewallComponents.ProtocolsMap.ValueToString(rule.Protocol);
+            this.Protocol = FirewallParser.ProtocolToString(rule.Protocol);
             this.LocalPorts = rule.LocalPorts;
             this.RemotePorts = rule.RemotePorts;
             this.LocalAddresses = rule.LocalAddresses;
             this.RemoteAddresses = rule.RemoteAddresses;
             this.ApplicationName = rule.ApplicationName;
-            this.Profiles = FirewallComponents.ProfileMap.ValueToString(rule.Profiles);
+            //this.Profiles = FirewallComponents.ProfileMap.ValueToString(rule.Profiles);
+            this.Profiles = FirewallParser.ProfileToString(rule.Profiles);
         }
 
         /// <summary>
@@ -131,10 +139,14 @@ namespace WindowsFirewallManager.WindowsFirewall
                     Logger.WriteLine("Warning", "Skip creating firewall rule because display name is empty.");
                 }
 
-                var directionFlag = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.StringToValue(direction);
-                var actionFlag = FirewallComponents.ActionMap<NET_FW_ACTION_>.StringToValue(actionType);
-                var protocolNum = FirewallComponents.ProtocolsMap.StringToValue(protocol);
-                var profilesType = FirewallComponents.ProfileMap.StringToValue(profiles);
+                //var directionFlag = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.StringToValue(direction);
+                var directionFlag = FirewallParser.StringToDirection(direction);
+                //var actionFlag = FirewallComponents.ActionMap<NET_FW_ACTION_>.StringToValue(actionType);
+                var actionFlag = FirewallParser.StringToAction(actionType);
+                //var protocolNum = FirewallComponents.ProtocolsMap.StringToValue(protocol);
+                var protocolNum = FirewallParser.StringToProtocol(protocol);
+                //var profilesType = FirewallComponents.ProfileMap.StringToValue(profiles);
+                var profilesType = FirewallParser.StringToProfile(profiles);
 
                 INetFwRule3 newRule = (INetFwRule3)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FWRule"));
                 newRule.Name = displayName;
@@ -345,14 +357,16 @@ namespace WindowsFirewallManager.WindowsFirewall
                         //  Set direction. (Inbound/Outbound)
                         if (direction != null)
                         {
-                            var directionFlag = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.StringToValue(direction);
+                            //var directionFlag = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.StringToValue(direction);
+                            var directionFlag = FirewallParser.StringToDirection(direction);
                             Logger.WriteLine("Info", $"Set direction to: {direction}");
                             rule.Direction = directionFlag;
                         }
                         //  Set action type. (Allow/Deny)
                         if (actionType != null)
                         {
-                            var actionFlag = FirewallComponents.ActionMap<NET_FW_ACTION_>.StringToValue(actionType);
+                            //var actionFlag = FirewallComponents.ActionMap<NET_FW_ACTION_>.StringToValue(actionType);
+                            var actionFlag = FirewallParser.StringToAction(actionType);
                             Logger.WriteLine("Info", $"Set action type to: {actionType}");
                             rule.Action = actionFlag;
                         }
@@ -371,7 +385,8 @@ namespace WindowsFirewallManager.WindowsFirewall
                         //  Set protocol
                         if (protocol != null)
                         {
-                            var protocolNum = FirewallComponents.ProtocolsMap.StringToValue(protocol);
+                            //var protocolNum = FirewallComponents.ProtocolsMap.StringToValue(protocol);
+                            var protocolNum = FirewallParser.StringToProtocol(protocol);
                             Logger.WriteLine("Info", $"Set protocol to: {protocol}");
                             rule.Protocol = protocolNum;
                         }
@@ -402,7 +417,8 @@ namespace WindowsFirewallManager.WindowsFirewall
                         //  Set profiles    
                         if (profiles != null)
                         {
-                            var profilesType = FirewallComponents.ProfileMap.StringToValue(profiles);
+                            //var profilesType = FirewallComponents.ProfileMap.StringToValue(profiles);
+                            var profilesType = FirewallParser.StringToProfile(profiles);
                             Logger.WriteLine("Info", $"Set profiles to: {profiles}");
                             rule.Profiles = profilesType;
                         }

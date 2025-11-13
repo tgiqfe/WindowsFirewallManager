@@ -20,8 +20,10 @@ namespace WindowsFirewallManager.WindowsFirewall
             {
                 this.DisplayName = rule.Name;
                 this.Enabled = rule.Enabled;
-                this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
-                this.ActionType = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
+                //this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
+                this.Direction = FirewallParser.DirectionToString(rule.Direction);
+                //this.ActionType = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
+                this.ActionType = FirewallParser.ActionToString(rule.Action);
                 Marshal.ReleaseComObject(rule);
             }
             Marshal.ReleaseComObject(fwPolicy2);
@@ -31,8 +33,10 @@ namespace WindowsFirewallManager.WindowsFirewall
         {
             this.DisplayName = rule.Name;
             this.Enabled = rule.Enabled;
-            this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
-            this.ActionType = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
+            //this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
+            this.Direction = FirewallParser.DirectionToString(rule.Direction);
+            //this.ActionType = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
+            this.ActionType = FirewallParser.ActionToString(rule.Action);
         }
 
         public static FirewallRuleSummary[] Load()

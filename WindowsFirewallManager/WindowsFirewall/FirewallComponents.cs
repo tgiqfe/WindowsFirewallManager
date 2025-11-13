@@ -2,6 +2,7 @@
 
 namespace WindowsFirewallManager.WindowsFirewall
 {
+    /*
     internal class FirewallComponents
     {
         /// <summary>
@@ -200,4 +201,5 @@ namespace WindowsFirewallManager.WindowsFirewall
             }
         }
     }
+    */
 }
