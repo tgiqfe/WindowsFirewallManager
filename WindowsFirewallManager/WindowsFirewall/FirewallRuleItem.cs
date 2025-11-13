@@ -5,7 +5,7 @@ using WindowsFirewallManager.Functions;
 
 namespace WindowsFirewallManager.WindowsFirewall
 {
-    internal class FirewallRule
+    internal class FirewallRuleItem
     {
         #region Public parameter
 
@@ -32,34 +32,37 @@ namespace WindowsFirewallManager.WindowsFirewall
         /// Constructor from firewall rule name.
         /// </summary>
         /// <param name="name"></param>
-        public FirewallRule(string name)
+        public FirewallRuleItem(string name)
         {
             INetFwPolicy2 fwPolicy2 = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
             var rule = fwPolicy2.Rules.
                 OfType<INetFwRule3>().
                 FirstOrDefault(x => name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
-            this.DisplayName = rule.Name;
-            this.Description = rule.Description;
-            this.Enabled = rule.Enabled;
-            this.Grouping = rule.Grouping;
-            this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
-            this.ActionType = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
-            this.Protocol = FirewallComponents.ProtocolsMap.ValueToString(rule.Protocol);
-            this.LocalPorts = rule.LocalPorts;
-            this.RemotePorts = rule.RemotePorts;
-            this.LocalAddresses = rule.LocalAddresses;
-            this.RemoteAddresses = rule.RemoteAddresses;
-            this.ApplicationName = rule.ApplicationName;
-            this.Profiles = FirewallComponents.ProfileMap.ValueToString(rule.Profiles);
+            if(rule != null)
+            {
+                this.DisplayName = rule.Name;
+                this.Description = rule.Description;
+                this.Enabled = rule.Enabled;
+                this.Grouping = rule.Grouping;
+                this.Direction = FirewallComponents.DirectionMap<NET_FW_RULE_DIRECTION_>.ValueToString(rule.Direction);
+                this.ActionType = FirewallComponents.ActionMap<NET_FW_ACTION_>.ValueToString(rule.Action);
+                this.Protocol = FirewallComponents.ProtocolsMap.ValueToString(rule.Protocol);
+                this.LocalPorts = rule.LocalPorts;
+                this.RemotePorts = rule.RemotePorts;
+                this.LocalAddresses = rule.LocalAddresses;
+                this.RemoteAddresses = rule.RemoteAddresses;
+                this.ApplicationName = rule.ApplicationName;
+                this.Profiles = FirewallComponents.ProfileMap.ValueToString(rule.Profiles);
+                Marshal.ReleaseComObject(rule);
+            }
             Marshal.ReleaseComObject(fwPolicy2);
-            Marshal.ReleaseComObject(rule);
         }
 
         /// <summary>
         /// Constructor from INetFwRule3 instance.
         /// </summary>
         /// <param name="rule"></param>
-        public FirewallRule(INetFwRule3 rule)
+        public FirewallRuleItem(INetFwRule3 rule)
         {
             this.DisplayName = rule.Name;
             this.Description = rule.Description;
@@ -80,10 +83,10 @@ namespace WindowsFirewallManager.WindowsFirewall
         /// Load all firewall rules.
         /// </summary>
         /// <returns></returns>
-        public static FirewallRule[] Load()
+        public static FirewallRuleItem[] Load()
         {
             INetFwPolicy2 fwPolicy2 = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
-            var rules = fwPolicy2.Rules.OfType<INetFwRule3>().Select(x => new FirewallRule(x));
+            var rules = fwPolicy2.Rules.OfType<INetFwRule3>().Select(x => new FirewallRuleItem(x));
             Marshal.ReleaseComObject(fwPolicy2);
             return rules.ToArray();
         }
@@ -169,10 +172,10 @@ namespace WindowsFirewallManager.WindowsFirewall
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static FirewallRule GetRule(string name)
+        public static FirewallRuleItem GetRule(string name)
         {
             Logger.WriteLine("Info", $"Get {_log_target}: {name}");
-            return new FirewallRule(name);
+            return new FirewallRuleItem(name);
         }
 
         /// <summary>

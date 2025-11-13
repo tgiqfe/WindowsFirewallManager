@@ -41,7 +41,7 @@ namespace WindowsFirewallManager.WindowsFirewall
 
         public static void Test_FirewallRule_setparameter()
         {
-            var rule = new FirewallRule("Test Rule from C#");
+            var rule = new FirewallRuleItem("Test Rule from C#");
             var setRule = rule.SetRule(
                 null,
                 null,
@@ -59,14 +59,14 @@ namespace WindowsFirewallManager.WindowsFirewall
 
         public static void Test_Firewall_rename()
         {
-            var rule = new FirewallRule("Test Rule from C#");
+            var rule = new FirewallRuleItem("Test Rule from C#");
             rule.Rename("Renamed Test Rule from C#");
             var statusRet = rule.ToDisable();
         }
 
         public static void Test_FirewallRule_Create()
         {
-            var ret = FirewallRule.New(
+            var ret = FirewallRuleItem.New(
                 displayName: "Test Rule from C#",
                 description: "This is a test rule created from C# code.",
                 enabled: true,
