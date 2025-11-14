@@ -45,6 +45,18 @@ namespace WindowsFirewallManager.WindowsFirewall
             }
             return "Unknown";
         }
+        public static string GetDirectionString(string text)
+        {
+            if (_mapDirection == null) InitializeDirection();
+            foreach (var key in _mapDirection.Keys)
+            {
+                if (key.Any(x => text.Equals(x, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return key[0];
+                }
+            }
+            throw new ArgumentException($"Invalid direction string: {text}");
+        }
 
         #endregion
         #region Action mapping.
@@ -81,6 +93,18 @@ namespace WindowsFirewallManager.WindowsFirewall
                 }
             }
             return "Unknown";
+        }
+        public static string GetActionString(string text)
+        {
+            if (_mapAction == null) InitializeAction();
+            foreach (var key in _mapDirection.Keys)
+            {
+                if (key.Any(x => text.Equals(x, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return key[0];
+                }
+            }
+            throw new ArgumentException($"Invalid action string: {text}");
         }
 
         #endregion
@@ -137,6 +161,22 @@ namespace WindowsFirewallManager.WindowsFirewall
             }
             return protocolNumber.ToString();
         }
+        public static string GetProtocolString(string text)
+        {
+            if (_mapProtocol == null) InitializeProtocols();
+            foreach (var key in _mapDirection.Keys)
+            {
+                if (key.Any(x => text.Equals(x, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return key[0];
+                }
+            }
+            if (int.TryParse(text, out int protocolNumber))
+            {
+                return protocolNumber.ToString();
+            }
+            throw new ArgumentException($"Invalid protocol string: {text}");
+        }
 
         #endregion
         #region Profile mapping.
@@ -184,6 +224,18 @@ namespace WindowsFirewallManager.WindowsFirewall
 
             var profiles = _mapProfile.Where(x => x.Value != all_flags && (x.Value & profileNumber) != 0);
             return string.Join(", ", profiles);
+        }
+        public static string GetProfileString(string text)
+        {
+            if (_mapProfile == null) InitializeProfile();
+            foreach (var key in _mapDirection.Keys)
+            {
+                if (key.Any(x => text.Equals(x, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return key[0];
+                }
+            }
+            throw new ArgumentException($"Invalid profile string: {text}");
         }
 
         #endregion
