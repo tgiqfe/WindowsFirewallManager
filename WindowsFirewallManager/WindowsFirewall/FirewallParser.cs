@@ -228,7 +228,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         public static string GetProfileString(string text)
         {
             if (_mapProfile == null) InitializeProfile();
-            foreach (var key in _mapDirection.Keys)
+            foreach (var key in _mapProfile.Keys)
             {
                 if (key.Any(x => text.Equals(x, StringComparison.OrdinalIgnoreCase)))
                 {
