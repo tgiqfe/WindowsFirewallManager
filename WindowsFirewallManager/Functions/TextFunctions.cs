@@ -120,7 +120,7 @@ namespace WindowsFirewallManager.Functions
         {
             foreach (var kvp in map)
             {
-                if(number == kvp.Value)
+                if (number == kvp.Value)
                 {
                     return kvp.Key[0];
                 }
