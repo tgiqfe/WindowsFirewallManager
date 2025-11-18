@@ -1,7 +1,6 @@
 ﻿using NetFwTypeLib;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Security.Cryptography;
+using WindowsFirewallManager.Functions;
 
 namespace WindowsFirewallManager.WindowsFirewall
 {
@@ -21,9 +20,11 @@ namespace WindowsFirewallManager.WindowsFirewall
                 { new string[] { "Outbound", "out", "o" }, NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_OUT },
             };
         }
+
         public static NET_FW_RULE_DIRECTION_ StringToDirection(string text)
         {
             if (_mapDirection == null) InitializeDirection();
+            /*
             foreach (var kvp in _mapDirection)
             {
                 if (kvp.Key.Any(x => text.Equals(x, StringComparison.OrdinalIgnoreCase)))
@@ -32,10 +33,13 @@ namespace WindowsFirewallManager.WindowsFirewall
                 }
             }
             throw new ArgumentException($"Invalid direction string: {text}");
+            */
+            return TextFunctions.StringToFlags<NET_FW_RULE_DIRECTION_>(text, _mapDirection);
         }
         public static string DirectionToString(NET_FW_RULE_DIRECTION_ direction)
         {
             if (_mapDirection == null) InitializeDirection();
+            /*
             foreach (var kvp in _mapDirection)
             {
                 if (kvp.Value == direction)
@@ -44,10 +48,13 @@ namespace WindowsFirewallManager.WindowsFirewall
                 }
             }
             return "Unknown";
+            */
+            return TextFunctions.FlagsToString<NET_FW_RULE_DIRECTION_>(direction, _mapDirection);
         }
         public static string GetDirectionString(string text)
         {
             if (_mapDirection == null) InitializeDirection();
+            /*
             foreach (var key in _mapDirection.Keys)
             {
                 if (key.Any(x => text.Equals(x, StringComparison.OrdinalIgnoreCase)))
@@ -56,6 +63,8 @@ namespace WindowsFirewallManager.WindowsFirewall
                 }
             }
             throw new ArgumentException($"Invalid direction string: {text}");
+            */
+            return TextFunctions.GetCorrect<NET_FW_RULE_DIRECTION_>(text, _mapDirection);
         }
 
         #endregion
@@ -73,6 +82,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         public static NET_FW_ACTION_ StringToAction(string text)
         {
             if (_mapAction == null) InitializeAction();
+            /*
             foreach (var kvp in _mapAction)
             {
                 if (kvp.Key.Any(x => text.Equals(x, StringComparison.OrdinalIgnoreCase)))
@@ -81,10 +91,13 @@ namespace WindowsFirewallManager.WindowsFirewall
                 }
             }
             throw new ArgumentException($"Invalid action string: {text}");
+            */
+            return TextFunctions.StringToFlags<NET_FW_ACTION_>(text, _mapAction);
         }
         public static string ActionToString(NET_FW_ACTION_ action)
         {
             if (_mapAction == null) InitializeAction();
+            /*
             foreach (var kvp in _mapAction)
             {
                 if (kvp.Value == action)
@@ -93,10 +106,13 @@ namespace WindowsFirewallManager.WindowsFirewall
                 }
             }
             return "Unknown";
+            */
+            return TextFunctions.FlagsToString<NET_FW_ACTION_>(action, _mapAction);
         }
         public static string GetActionString(string text)
         {
             if (_mapAction == null) InitializeAction();
+            /*
             foreach (var key in _mapDirection.Keys)
             {
                 if (key.Any(x => text.Equals(x, StringComparison.OrdinalIgnoreCase)))
@@ -105,6 +121,8 @@ namespace WindowsFirewallManager.WindowsFirewall
                 }
             }
             throw new ArgumentException($"Invalid action string: {text}");
+            */
+            return TextFunctions.GetCorrect<NET_FW_ACTION_>(text, _mapAction);
         }
 
         #endregion
@@ -136,6 +154,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         public static int StringToProtocol(string text)
         {
             if (_mapProtocol == null) InitializeProtocols();
+            /*
             foreach (var kvp in _mapProtocol)
             {
                 if (kvp.Key.Any(x => text.Equals(x, StringComparison.OrdinalIgnoreCase)))
@@ -148,10 +167,13 @@ namespace WindowsFirewallManager.WindowsFirewall
                 return protocolNumber;
             }
             throw new ArgumentException($"Invalid protocol string: {text}");
+            */
+            return TextFunctions.StringToFlags(text, _mapProtocol);
         }
-        public static string ProtocolToString(int protocolNumber)
+        public static string ProtocolToString(int val)
         {
             if (_mapProtocol == null) InitializeProtocols();
+            /*
             foreach (var kvp in _mapProtocol)
             {
                 if (kvp.Value == protocolNumber)
@@ -160,10 +182,13 @@ namespace WindowsFirewallManager.WindowsFirewall
                 }
             }
             return protocolNumber.ToString();
+            */
+            return TextFunctions.FlagsToString(val, _mapProtocol);
         }
         public static string GetProtocolString(string text)
         {
             if (_mapProtocol == null) InitializeProtocols();
+            /*
             foreach (var key in _mapDirection.Keys)
             {
                 if (key.Any(x => text.Equals(x, StringComparison.OrdinalIgnoreCase)))
@@ -176,6 +201,8 @@ namespace WindowsFirewallManager.WindowsFirewall
                 return protocolNumber.ToString();
             }
             throw new ArgumentException($"Invalid protocol string: {text}");
+            */
+            return TextFunctions.GetCorrect(text, _mapProtocol);
         }
 
         #endregion
@@ -188,13 +215,14 @@ namespace WindowsFirewallManager.WindowsFirewall
             {
                 { new string[] { "Domain", "dom", "1" }, (int)NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_DOMAIN },
                 { new string[] { "Private", "priv", "pri", "2" }, (int)NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_PRIVATE },
-                { new string[] { "Public", "pub", "3" }, (int)NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_PUBLIC },
+                { new string[] { "Public", "pub", "4" }, (int)NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_PUBLIC },
                 { new string[] { "All", "Any", "*", "2147483647" }, (int)NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_ALL },
             };
         }
         public static int StringToProfile(string text)
         {
             if (_mapProfile == null) InitializeProfile();
+            /*
             int ret = 0;
             foreach (var profile in text.Split(',').Select(x => x.Trim()))
             {
@@ -214,6 +242,8 @@ namespace WindowsFirewallManager.WindowsFirewall
                 }
             }
             return ret;
+            */
+            return TextFunctions.StringToFlags(text, _mapProfile);
         }
         public static string ProfileToString(int profileNumber)
         {
@@ -228,6 +258,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         public static string GetProfileString(string text)
         {
             if (_mapProfile == null) InitializeProfile();
+            /*
             foreach (var key in _mapProfile.Keys)
             {
                 if (key.Any(x => text.Equals(x, StringComparison.OrdinalIgnoreCase)))
@@ -236,6 +267,8 @@ namespace WindowsFirewallManager.WindowsFirewall
                 }
             }
             throw new ArgumentException($"Invalid profile string: {text}");
+            */
+            return TextFunctions.GetCorrect(text, _mapProfile);
         }
 
         #endregion
