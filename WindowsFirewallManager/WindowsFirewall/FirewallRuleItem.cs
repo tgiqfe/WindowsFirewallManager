@@ -1,7 +1,6 @@
 ﻿using NetFwTypeLib;
 using System.Data;
 using System.Runtime.InteropServices;
-using WindowsFirewallManager.Functions;
 
 namespace WindowsFirewallManager.WindowsFirewall
 {
@@ -12,7 +11,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         public string DisplayName { get; set; }
         public string Description { get; set; }
         public bool Enabled { get; set; }
-        public string DisplayGroup { get { return DllResourceReader.ExtractString(this.Grouping); } }
+        public string DisplayGroup { get { return Functions.DllResourceReader.ExtractString(this.Grouping); } }
         public string Grouping { get; set; }
         public string Direction { get; set; }
         public string ActionType { get; set; }

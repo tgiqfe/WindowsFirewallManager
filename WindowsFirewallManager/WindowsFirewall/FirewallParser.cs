@@ -1,5 +1,4 @@
 ﻿using NetFwTypeLib;
-using WindowsFirewallManager.Functions;
 
 namespace WindowsFirewallManager.WindowsFirewall
 {
@@ -23,17 +22,17 @@ namespace WindowsFirewallManager.WindowsFirewall
         public static NET_FW_RULE_DIRECTION_ StringToDirection(string text)
         {
             if (_mapDirection == null) InitializeDirection();
-            return TextFunctions.StringToFlags<NET_FW_RULE_DIRECTION_>(text, _mapDirection);
+            return Functions.TextFunctions.StringToFlags<NET_FW_RULE_DIRECTION_>(text, _mapDirection);
         }
         public static string DirectionToString(NET_FW_RULE_DIRECTION_ direction)
         {
             if (_mapDirection == null) InitializeDirection();
-            return TextFunctions.FlagsToString<NET_FW_RULE_DIRECTION_>(direction, _mapDirection);
+            return Functions.TextFunctions.FlagsToString<NET_FW_RULE_DIRECTION_>(direction, _mapDirection);
         }
         public static string GetDirectionString(string text)
         {
             if (_mapDirection == null) InitializeDirection();
-            return TextFunctions.GetCorrect<NET_FW_RULE_DIRECTION_>(text, _mapDirection);
+            return Functions.TextFunctions.GetCorrect<NET_FW_RULE_DIRECTION_>(text, _mapDirection);
         }
 
         #endregion
@@ -51,17 +50,17 @@ namespace WindowsFirewallManager.WindowsFirewall
         public static NET_FW_ACTION_ StringToAction(string text)
         {
             if (_mapAction == null) InitializeAction();
-            return TextFunctions.StringToFlags<NET_FW_ACTION_>(text, _mapAction);
+            return Functions.TextFunctions.StringToFlags<NET_FW_ACTION_>(text, _mapAction);
         }
         public static string ActionToString(NET_FW_ACTION_ action)
         {
             if (_mapAction == null) InitializeAction();
-            return TextFunctions.FlagsToString<NET_FW_ACTION_>(action, _mapAction);
+            return Functions.TextFunctions.FlagsToString<NET_FW_ACTION_>(action, _mapAction);
         }
         public static string GetActionString(string text)
         {
             if (_mapAction == null) InitializeAction();
-            return TextFunctions.GetCorrect<NET_FW_ACTION_>(text, _mapAction);
+            return Functions.TextFunctions.GetCorrect<NET_FW_ACTION_>(text, _mapAction);
         }
 
         #endregion
@@ -93,17 +92,17 @@ namespace WindowsFirewallManager.WindowsFirewall
         public static int StringToProtocol(string text)
         {
             if (_mapProtocol == null) InitializeProtocols();
-            return TextFunctions.StringToFlags(text, _mapProtocol);
+            return Functions.TextFunctions.StringToFlags(text, _mapProtocol);
         }
         public static string ProtocolToString(int val)
         {
             if (_mapProtocol == null) InitializeProtocols();
-            return TextFunctions.FlagsToString(val, _mapProtocol);
+            return Functions.TextFunctions.FlagsToString(val, _mapProtocol);
         }
         public static string GetProtocolString(string text)
         {
             if (_mapProtocol == null) InitializeProtocols();
-            return TextFunctions.GetCorrect(text, _mapProtocol);
+            return Functions.TextFunctions.GetCorrect(text, _mapProtocol);
         }
 
         #endregion
@@ -123,7 +122,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         public static int StringToProfile(string text)
         {
             if (_mapProfile == null) InitializeProfile();
-            return TextFunctions.StringToFlags(text, _mapProfile);
+            return Functions.TextFunctions.StringToFlags(text, _mapProfile);
         }
         public static string ProfileToString(int profileNumber)
         {
@@ -138,7 +137,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         public static string GetProfileString(string text)
         {
             if (_mapProfile == null) InitializeProfile();
-            return TextFunctions.GetCorrect(text, _mapProfile);
+            return Functions.TextFunctions.GetCorrect(text, _mapProfile);
         }
 
         #endregion
