@@ -26,7 +26,8 @@ namespace WindowsFirewallManager.WindowsFirewall
 
         #endregion
 
-        private const string _log_target = "firewall rule";
+        const string _title = "WindowsFirewall";
+        const string _log_target = "firewall rule";
 
         /// <summary>
         /// Constructor from firewall rule name.
@@ -123,12 +124,12 @@ namespace WindowsFirewallManager.WindowsFirewall
             string localAddresses,
             string remoteAddresses)
         {
-            Logger.WriteLine("Info", $"Create new {_log_target}: {displayName}");
+            Logger.WriteLine(LogLevel.Info, _title, $"Create new {_log_target}: {displayName}");
             try
             {
                 if (string.IsNullOrEmpty(displayName))
                 {
-                    Logger.WriteLine("Warning", "Skip creating firewall rule because display name is empty.");
+                    Logger.WriteLine(LogLevel.Warning, _title, "Skip creating firewall rule because display name is empty.");
                 }
 
                 var directionFlag = FirewallParser.StringToDirection(direction);
@@ -156,13 +157,13 @@ namespace WindowsFirewallManager.WindowsFirewall
                 Marshal.ReleaseComObject(fwPolicy2);
                 Marshal.ReleaseComObject(newRule);
 
-                Logger.WriteLine("Info", $"Success created {_log_target}: {displayName}");
+                Logger.WriteLine(LogLevel.Info, _title, $"Success created {_log_target}: {displayName}");
                 return true;
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to create {_log_target}.");
-                Logger.WriteRaw(e.ToString());
+                Logger.WriteLine(LogLevel.Error, _title, $"Failed to create {_log_target}.");
+                Logger.WriteRaw(_title, e.ToString());
                 return false;
             }
         }
@@ -174,7 +175,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         /// <returns></returns>
         public static FirewallRuleItem GetRule(string name)
         {
-            Logger.WriteLine("Info", $"Get {_log_target}: {name}");
+            Logger.WriteLine(LogLevel.Info, _title, $"Get {_log_target}: {name}");
             return new FirewallRuleItem(name);
         }
 
@@ -184,7 +185,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         /// <returns></returns>
         public bool ToEnable()
         {
-            Logger.WriteLine("Info", $"To enable {_log_target}: {this.DisplayName}");
+            Logger.WriteLine(LogLevel.Info, _title, $"To enable {_log_target}: {this.DisplayName}");
             try
             {
                 using (var helper = new FirewallRuleHelper(this.DisplayName))
@@ -194,13 +195,13 @@ namespace WindowsFirewallManager.WindowsFirewall
                         rule.Enabled = true;
                     }
                 }
-                Logger.WriteLine("Info", $"Success enabled {_log_target}: {this.DisplayName}");
+                Logger.WriteLine(LogLevel.Info, _title,  $"Success enabled {_log_target}: {this.DisplayName}");
                 return true;
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to disable {_log_target}.");
-                Logger.WriteRaw(e.ToString());
+                Logger.WriteLine(LogLevel.Error, _title, $"Failed to disable {_log_target}.");
+                Logger.WriteRaw(_title, e.ToString());
             }
             return false;
         }
@@ -211,7 +212,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         /// <returns></returns>
         public bool ToDisable()
         {
-            Logger.WriteLine("Info", $"To disable {_log_target}: {this.DisplayName}");
+            Logger.WriteLine(LogLevel.Info, _title, $"To disable {_log_target}: {this.DisplayName}");
             try
             {
                 using (var helper = new FirewallRuleHelper(this.DisplayName))
@@ -221,13 +222,13 @@ namespace WindowsFirewallManager.WindowsFirewall
                         rule.Enabled = false;
                     }
                 }
-                Logger.WriteLine("Info", $"Success disabled {_log_target}: {this.DisplayName}");
+                Logger.WriteLine(LogLevel.Info, _title, $"Success disabled {_log_target}: {this.DisplayName}");
                 return true;
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to disable {_log_target}.");
-                Logger.WriteRaw(e.ToString());
+                Logger.WriteLine(LogLevel.Error, _title, $"Failed to disable {_log_target}.");
+                Logger.WriteRaw(_title, e.ToString());
             }
             return false;
         }
@@ -238,7 +239,7 @@ namespace WindowsFirewallManager.WindowsFirewall
         /// <returns></returns>
         public bool Remove()
         {
-            Logger.WriteLine("Info", $"To remove {_log_target}: {this.DisplayName}");
+            Logger.WriteLine(LogLevel.Info, _title, $"To remove {_log_target}: {this.DisplayName}");
             try
             {
                 using (var helper = new FirewallRuleHelper(this.DisplayName))
@@ -248,13 +249,13 @@ namespace WindowsFirewallManager.WindowsFirewall
                         helper.FwPolicy2.Rules.Remove(rule.Name);
                     }
                 }
-                Logger.WriteLine("Info", $"Success removed {_log_target}: {this.DisplayName}");
+                Logger.WriteLine(LogLevel.Info, _title,  $"Success removed {_log_target}: {this.DisplayName}");
                 return true;
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to remove {_log_target}.");
-                Logger.WriteRaw(e.ToString());
+                Logger.WriteLine(LogLevel.Error, _title, $"Failed to remove {_log_target}.");
+                Logger.WriteRaw(_title, e.ToString());
             }
             return false;
         }
@@ -275,10 +276,10 @@ namespace WindowsFirewallManager.WindowsFirewall
         /// <returns></returns>
         public bool Rename(string newName)
         {
-            Logger.WriteLine("Info", $"To rename {_log_target}: {this.DisplayName} to {newName}");
+            Logger.WriteLine(LogLevel.Info, _title,  $"To rename {_log_target}: {this.DisplayName} to {newName}");
             if (string.IsNullOrEmpty(newName))
             {
-                Logger.WriteLine("Warning", $"Skip rename {_log_target} cannot be empty.");
+                Logger.WriteLine(LogLevel.Warning, _title, $"Skip rename {_log_target} cannot be empty.");
                 return false;
             }
             try
@@ -290,13 +291,13 @@ namespace WindowsFirewallManager.WindowsFirewall
                         rule.Name = newName;
                     }
                 }
-                Logger.WriteLine("Info", $"Success renamed {_log_target}.");
+                Logger.WriteLine(LogLevel.Info, _title,  $"Success renamed {_log_target}.");
                 return true;
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to rename {_log_target}.");
-                Logger.WriteRaw(e.ToString());
+                Logger.WriteLine(LogLevel.Error, _title, $"Failed to rename {_log_target}.");
+                Logger.WriteRaw(_title, e.ToString());
             }
             return false;
         }
@@ -329,7 +330,7 @@ namespace WindowsFirewallManager.WindowsFirewall
             string remoteAddresses,
             string profiles)
         {
-            Logger.WriteLine("Info", $"Set parameter to {_log_target}: {this.DisplayName}");
+            Logger.WriteLine(LogLevel.Info, _title,  $"Set parameter to {_log_target}: {this.DisplayName}");
             try
             {
                 using (var helper = new FirewallRuleHelper(this.DisplayName))
@@ -339,82 +340,82 @@ namespace WindowsFirewallManager.WindowsFirewall
                         //  Set description.
                         if (description != null)
                         {
-                            Logger.WriteLine("Info", $"Set description to: {description}");
+                            Logger.WriteLine(LogLevel.Info, _title,  $"Set description to: {description}");
                             rule.Description = description;
                         }
                         //  Set direction. (Inbound/Outbound)
                         if (direction != null)
                         {
                             var directionFlag = FirewallParser.StringToDirection(direction);
-                            Logger.WriteLine("Info", $"Set direction to: {direction}");
+                            Logger.WriteLine(LogLevel.Info, _title,  $"Set direction to: {direction}");
                             rule.Direction = directionFlag;
                         }
                         //  Set action type. (Allow/Deny)
                         if (actionType != null)
                         {
                             var actionFlag = FirewallParser.StringToAction(actionType);
-                            Logger.WriteLine("Info", $"Set action type to: {actionType}");
+                            Logger.WriteLine(LogLevel.Info, _title,  $"Set action type to: {actionType}");
                             rule.Action = actionFlag;
                         }
                         //  Set grouping.
                         if (grouping != null)
                         {
-                            Logger.WriteLine("Info", $"Set grouping to: {grouping}");
+                            Logger.WriteLine(LogLevel.Info, _title,  $"Set grouping to: {grouping}");
                             rule.Grouping = grouping;
                         }
                         //  Set application name.
                         if (applicationName != null)
                         {
-                            Logger.WriteLine("Info", $"Set application name to: {applicationName}");
+                            Logger.WriteLine(LogLevel.Info, _title,  $"Set application name to: {applicationName}");
                             rule.ApplicationName = applicationName;
                         }
                         //  Set protocol
                         if (protocol != null)
                         {
                             var protocolNum = FirewallParser.StringToProtocol(protocol);
-                            Logger.WriteLine("Info", $"Set protocol to: {protocol}");
+                            Logger.WriteLine(LogLevel.Info, _title,  $"Set protocol to: {protocol}");
                             rule.Protocol = protocolNum;
                         }
                         //  Set local ports
                         if (localPorts != null)
                         {
-                            Logger.WriteLine("Info", $"Set local ports to: {localPorts}");
+                            Logger.WriteLine(LogLevel.Info, _title,  $"Set local ports to: {localPorts}");
                             rule.LocalPorts = localPorts;
                         }
                         //  Set remote ports
                         if (remotePorts != null)
                         {
-                            Logger.WriteLine("Info", $"Set remote ports to: {remotePorts}");
+                            Logger.WriteLine(LogLevel.Info, _title,  $"Set remote ports to: {remotePorts}");
                             rule.RemotePorts = remotePorts;
                         }
                         //  Set local addresses
                         if (localAddresses != null)
                         {
-                            Logger.WriteLine("Info", $"Set local addresses to: {localAddresses}");
+                            Logger.WriteLine(LogLevel.Info, _title,  $"Set local addresses to: {localAddresses}");
                             rule.LocalAddresses = localAddresses;
                         }
                         //  Set remote addresses
                         if (remoteAddresses != null)
                         {
-                            Logger.WriteLine("Info", $"Set remote addresses to: {remoteAddresses}");
+                            Logger.WriteLine(LogLevel.Info, _title,  $"Set remote addresses to: {remoteAddresses}");
                             rule.RemoteAddresses = remoteAddresses;
                         }
                         //  Set profiles    
                         if (profiles != null)
                         {
                             var profilesType = FirewallParser.StringToProfile(profiles);
-                            Logger.WriteLine("Info", $"Set profiles to: {profiles}");
+                            Logger.WriteLine(LogLevel.Info, _title,  $"Set profiles to: {profiles}");
                             rule.Profiles = profilesType;
                         }
                     }
                 }
-                Logger.WriteLine("Info", $"Success set {_log_target}: {this.DisplayName}");
+                Logger.WriteLine(LogLevel.Info, _title,  $"Success set {_log_target}: {this.DisplayName}");
                 return true;
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to set {_log_target}.");
-                Logger.WriteRaw(e.ToString());
+                Logger.WriteLine(LogLevel.Error, _title, $"Failed to set {_log_target}.");
+                Logger.WriteRaw(_title, e.ToString());
             }
             return false;
         }

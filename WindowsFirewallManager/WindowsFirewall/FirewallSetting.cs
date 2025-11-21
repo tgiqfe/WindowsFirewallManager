@@ -16,7 +16,8 @@ namespace WindowsFirewallManager.WindowsFirewall
         #endregion
 
         private NET_FW_PROFILE_TYPE2_ _profileType;
-        private const string _log_target = "firewall setting";
+        const string _title = "WindowsFirewall";
+        const string _log_target = "firewall setting";
 
         public FirewallSetting(INetFwPolicy2 policy, NET_FW_PROFILE_TYPE2_ profile)
         {
@@ -53,40 +54,40 @@ namespace WindowsFirewallManager.WindowsFirewall
 
         public bool ToEnable()
         {
-            Logger.WriteLine("Info", $"Enable {_log_target} for {this.Profile} profile.");
+            Logger.WriteLine(LogLevel.Info, _title, $"Enable {_log_target} for {this.Profile} profile.");
             try
             {
                 using (var fwHelper = new FirewallSettingHelper())
                 {
                     fwHelper.FwPolicy2.FirewallEnabled[_profileType] = true;
-                    Logger.WriteLine("Info", $"Success {_log_target} profile is enabled.");
+                    Logger.WriteLine(LogLevel.Info, _title, $"Success {_log_target} profile is enabled.");
                     return true;
                 }
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to enabled {_log_target}. Exception: {e.Message}");
-                Logger.WriteRaw(e.Message);
+                Logger.WriteLine(LogLevel.Error, _title, $"Failed to enabled {_log_target}. Exception: {e.Message}");
+                Logger.WriteRaw(_title, e.Message);
             }
             return false;
         }
 
         public bool ToDisable()
         {
-            Logger.WriteLine("Info", $"Disable {_log_target} for {this.Profile} profile.");
+            Logger.WriteLine(LogLevel.Info, _title, $"Disable {_log_target} for {this.Profile} profile.");
             try
             {
                 using (var fwHelper = new FirewallSettingHelper())
                 {
                     fwHelper.FwPolicy2.FirewallEnabled[_profileType] = false;
-                    Logger.WriteLine("Info", $"Success {_log_target} profile is disabled.");
+                    Logger.WriteLine(LogLevel.Info, _title, $"Success {_log_target} profile is disabled.");
                     return true;
                 }
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to disable {_log_target}. Exception: {e.Message}");
-                Logger.WriteRaw(e.Message);
+                Logger.WriteLine(LogLevel.Error, _title, $"Failed to disable {_log_target}. Exception: {e.Message}");
+                Logger.WriteRaw(_title, e.Message);
             }
             return false;
         }
@@ -97,7 +98,7 @@ namespace WindowsFirewallManager.WindowsFirewall
             string defaultInboundAction,
             string defaultOutboundAction)
         {
-            Logger.WriteLine("Info", $"Set {_log_target} for {this.Profile} profile.");
+            Logger.WriteLine(LogLevel.Info, _title, $"Set {_log_target} for {this.Profile} profile.");
             try
             {
                 using (var fwHelper = new FirewallSettingHelper())
@@ -105,34 +106,34 @@ namespace WindowsFirewallManager.WindowsFirewall
                     var fwPolicy2 = fwHelper.FwPolicy2;
                     if (blockAllInbound.HasValue)
                     {
-                        Logger.WriteLine("Info", $"Set Block All Inbound Traffic to {blockAllInbound.Value} for {this.Profile} profile.");
+                        Logger.WriteLine(LogLevel.Info, _title, $"Set Block All Inbound Traffic to {blockAllInbound.Value} for {this.Profile} profile.");
                         fwPolicy2.BlockAllInboundTraffic[_profileType] = blockAllInbound.Value;
                     }
                     if (notifyOnListen.HasValue)
                     {
-                        Logger.WriteLine("Info", $"Set Notify On Listen to {notifyOnListen.Value} for {this.Profile} profile.");
+                        Logger.WriteLine(LogLevel.Info, _title, $"Set Notify On Listen to {notifyOnListen.Value} for {this.Profile} profile.");
                         fwPolicy2.NotificationsDisabled[_profileType] = !notifyOnListen.Value;
                     }
                     if (!string.IsNullOrEmpty(defaultInboundAction))
                     {
                         var defInbound = FirewallParser.StringToAction(defaultInboundAction);
-                        Logger.WriteLine("Info", $"Set Default Inbound Action to {defaultInboundAction} for {this.Profile} profile.");
+                        Logger.WriteLine(LogLevel.Info, _title, $"Set Default Inbound Action to {defaultInboundAction} for {this.Profile} profile.");
                         fwPolicy2.DefaultInboundAction[_profileType] = defInbound;
                     }
                     if (!string.IsNullOrEmpty(defaultOutboundAction))
                     {
                         var defOutbound = FirewallParser.StringToAction(defaultOutboundAction);
-                        Logger.WriteLine("Info", $"Set Default Outbound Action to {defaultOutboundAction} for {this.Profile} profile.");
+                        Logger.WriteLine(LogLevel.Info, _title, $"Set Default Outbound Action to {defaultOutboundAction} for {this.Profile} profile.");
                         fwPolicy2.DefaultOutboundAction[_profileType] = defOutbound;
                     }
-                    Logger.WriteLine("Info", $"Success to set {_log_target}.");
+                    Logger.WriteLine(LogLevel.Info, _title, $"Success to set {_log_target}.");
                     return true;
                 }
             }
             catch (Exception e)
             {
-                Logger.WriteLine("Error", $"Failed to set {_log_target}. Exception: {e.Message}");
-                Logger.WriteRaw(e.Message);
+                Logger.WriteLine(LogLevel.Error, _title, $"Failed to set {_log_target}. Exception: {e.Message}");
+                Logger.WriteRaw(_title, e.Message);
             }
             return false;
         }
